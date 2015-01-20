@@ -7,6 +7,8 @@
 //
 
 #import "EAAppDelegate.h"
+#import "EAAPI+Hotel.h"
+#import "EAAPIHotelGroupParser.h"
 
 @implementation EAAppDelegate
 
@@ -16,6 +18,37 @@
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
+    
+    EAAPI *api = [[EAAPI alloc] init];
+    /*
+    [api fetchHotelDetailWithHotelId:40 success:^(NSDictionary *response) {
+        
+        EAHotel *hotel = [[EAHotel alloc] initWithResponse:response];
+        
+        if (hotel.apiEntry.success) {
+            EALog(@"Data: %@", hotel);
+        }
+        else {
+            EALog(@"Error: %@", hotel.apiEntry.message);
+        }
+        
+    } failure:^(NSError *error) {
+        EALog(@"Error: %@", error.localizedDescription);
+    }];
+    */
+    
+    [api batchHotelsWithPageIndex:1 success:^(NSDictionary *response) {
+        EAAPIHotelGroupParser *parser = [[EAAPIHotelGroupParser alloc] initWithResponse:response];
+        
+        if (parser.success) {
+            NSArray *hotels = parser.hotels;
+            EALog(@"hotels: %@", hotels[0]);
+        }
+        
+    } failure:^(NSError *error) {
+        EALog(@"Error: %@", error.localizedDescription);
+    }];
+    
     return YES;
 }
 
